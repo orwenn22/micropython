@@ -2297,6 +2297,7 @@ mp_obj_t mp_obj_new_str(const char *data, size_t len) {
     }
 }
 
+#include <stdio.h>
 mp_obj_t mp_obj_str_intern(mp_obj_t str) {
     GET_STR_DATA_LEN(str, data, len);
     return mp_obj_new_str_via_qstr((const char *)data, len);

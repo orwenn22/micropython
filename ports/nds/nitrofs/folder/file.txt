@@ -1,0 +1,3 @@
+This is a file in a folder.
+You can use os.chdir("folder") to enter this directory
+and use open("file.txt") to open it.
