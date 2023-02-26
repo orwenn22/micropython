@@ -11,7 +11,8 @@
 typedef struct _nds_obj_nitro_file {
     mp_obj_base_t base;
     FILE* fileptr;
-    bool read;          //true if the file is opened in read mode  ("r")
+    bool read;          //true if the file can be read
+    bool write;         //true if the file can be written
     bool binary;        //true if the file is opened in binary mode ("b")
     //TODO : edit and append mode
     size_t charcount;

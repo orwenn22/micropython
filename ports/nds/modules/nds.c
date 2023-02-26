@@ -42,17 +42,32 @@ mp_obj_t py_nds_open(mp_obj_t path, mp_obj_t mode) {
     const char* c_path = mp_obj_str_get_str(path);
     const char* c_mode = mp_obj_str_get_str(mode);
 
-    //TODO : handle 'x' mode.
-    bool read = true;
+    //TODO : handle 'x' mode (aka throw an error if the file already exist).
+    bool read = false;
+    bool write = false;
     bool binary = false;
     bool edit = false;
     bool append = false;
     for(int i = 0; c_mode[i] != 0; i++) {
         char c = c_mode[i];
-        if(c == 'w') read = false;
-        else if(c == 'b') binary = true;
-        else if(c == '+') edit = true;
-        else if(c == 'a') append = true;
+        if(c == 'w') {
+            write = true;
+        }
+        else if(c == 'r') {
+            read = true;
+        }
+        else if(c == 'b') {
+            binary = true;
+        }
+        else if(c == '+') {
+            edit = true;
+            read = true;
+            write = true;
+        }
+        else if(c == 'a') {
+            append = true;
+            write = true;
+        }
     }
 
 
@@ -66,11 +81,11 @@ mp_obj_t py_nds_open(mp_obj_t path, mp_obj_t mode) {
 
     fileobj->fileptr = f;
     fileobj->read = read;
+    fileobj->write = write;
     fileobj->binary = binary;
     //TODO : edit and append mode
     (void)append;
     (void)edit;
-    //fileobj->seekpos = 0;
 
     fseek(f, 0, SEEK_END);
     fileobj->charcount = ftell(f);

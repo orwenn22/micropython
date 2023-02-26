@@ -3,6 +3,7 @@
 #include "py/stackctrl.h"
 #include "py/mperrno.h"
 #include "py/obj.h"
+#include "py/objstr.h"
 
 #include "nitrofile.h"
 
@@ -41,6 +42,23 @@ STATIC mp_obj_t py_nds_nitrofile_readable(mp_obj_t self_in) {
     return mp_obj_new_bool(self->read);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(nds_nitrofile_readable_obj, py_nds_nitrofile_readable);
+
+
+///////////////////////////
+// NitroFile.write(data : str)
+STATIC mp_obj_t py_nds_nitrofile_write(mp_obj_t self_in, mp_obj_t str_data) {
+    nds_obj_nitro_file* self = MP_OBJ_TO_PTR(self_in);
+    
+    if(self->write == false) {
+        mp_raise_OSError(EIO);  //idk if it's an IO error in that case
+    }
+
+    GET_STR_DATA_LEN(str_data, c_str, lenght);
+    fwrite(c_str, 1, lenght, self->fileptr);
+
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_2(nds_nitrofile_write_obj, py_nds_nitrofile_write);
 
 
 ///////////////////////////
@@ -115,7 +133,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(nds_nitrofile_readline_obj, py_nds_nitrofile_readline)
 
 
 ///////////////////////////
-// NitroFile.readlines() -> str
+// NitroFile.readlines() -> List[str]
 STATIC mp_obj_t py_nds_nitrofile_readlines(mp_obj_t self_in) {
     //nds_obj_nitro_file* self = MP_OBJ_TO_PTR(self_in);
 
@@ -167,6 +185,7 @@ STATIC const mp_rom_map_elem_t nds_nitrofile_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_close)     , MP_ROM_PTR(&nds_nitrofile_close_obj) },
     { MP_ROM_QSTR(MP_QSTR_ptr)       , MP_ROM_PTR(&nds_nitrofile_ptr_obj) },
     { MP_ROM_QSTR(MP_QSTR_readable)  , MP_ROM_PTR(&nds_nitrofile_readable_obj) },
+    { MP_ROM_QSTR(MP_QSTR_write)     , MP_ROM_PTR(&nds_nitrofile_write_obj) },
     { MP_ROM_QSTR(MP_QSTR_read)      , MP_ROM_PTR(&nds_nitrofile_read_obj) },
     { MP_ROM_QSTR(MP_QSTR_readline)  , MP_ROM_PTR(&nds_nitrofile_readline_obj) },
     { MP_ROM_QSTR(MP_QSTR_readlines) , MP_ROM_PTR(&nds_nitrofile_readlines_obj) },
