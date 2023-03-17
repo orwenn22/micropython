@@ -14,6 +14,8 @@
 #include "../nitrofile.h"
 
 
+const mp_obj_t myconst = MP_ROM_INT(42);
+
 //////////////////////////
 //printstackusage()
 STATIC mp_obj_t py_nds_printstackusage(void) {
@@ -112,6 +114,8 @@ STATIC const mp_rom_map_elem_t mp_module_nds_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_printstackusage)  , MP_ROM_PTR(&nds_printstackusage_obj) },   //function "printstackusage()"
     { MP_ROM_QSTR(MP_QSTR_nitrofsinit)      , MP_ROM_PTR(&nds_nitrofsinit_obj) },
     { MP_ROM_QSTR(MP_QSTR_open)             , MP_ROM_PTR(&nds_open_obj) },
+
+    { MP_ROM_QSTR(MP_QSTR_myconst)          , myconst },
 
     //{ MP_ROM_QSTR(MP_QSTR_NitroFile)        , MP_ROM_PTR(&nds_type_nitrofile) },        //class "NitroFile"
 };

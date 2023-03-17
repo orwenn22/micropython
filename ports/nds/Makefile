@@ -62,10 +62,10 @@ SRC_C = \
 
 
 SRC_C += shared/libc/string0.c
-SRC_C += modules/nds.c modules/os.c nitrofile.c
+SRC_C += modules/modnds.c modules/modos.c nitrofile.c
 
 
-SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c modules/nds.c modules/os.c nitrofile.c
+SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c modules/modnds.c modules/modos.c nitrofile.c
 
 #OBJ += $(PY_CORE_O)
 OBJ += $(PY_O)
