@@ -51,6 +51,7 @@ LIBS = -L/opt/devkitpro/libnds/lib -L/opt/devkitpro/portlibs/nds/lib -L/opt/devk
 
 SRC_C = \
 	main.c \
+	modutime.c \
 	uart_core.c \
 	shared/libc/printf.c \
 	shared/readline/readline.c \
