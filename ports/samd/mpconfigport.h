@@ -60,6 +60,7 @@
 #define MICROPY_ENABLE_SCHEDULER            (1)
 #define MICROPY_SCHEDULER_STATIC_NODES      (1)
 #define MICROPY_MODULE_WEAK_LINKS           (1)
+#define MICROPY_HW_ENABLE_USBDEV            (1)
 #define MICROPY_HW_USB_CDC_1200BPS_TOUCH    (1)
 
 // Control over Python builtins
@@ -77,7 +78,9 @@
 #define MICROPY_PY_IO_IOBASE                (1)
 
 // Extended modules
-#define MICROPY_PY_UTIME_MP_HAL             (1)
+#define MICROPY_PY_UTIME_GMTIME_LOCALTIME_MKTIME (1)
+#define MICROPY_PY_UTIME_TIME_TIME_NS       (1)
+#define MICROPY_PY_UTIME_INCLUDEFILE        "ports/samd/modutime.c"
 #define MICROPY_PY_MACHINE                  (1)
 #define MICROPY_PY_UOS                      (1)
 #define MICROPY_PY_UOS_INCLUDEFILE          "ports/samd/moduos.c"

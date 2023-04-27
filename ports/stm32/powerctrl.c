@@ -33,11 +33,9 @@
 
 #if defined(STM32H7)
 #define RCC_SR          RSR
-#if defined(STM32H743xx) || defined(STM32H750xx)
-#define RCC_SR_SFTRSTF  RCC_RSR_SFTRSTF
-#elif defined(STM32H747xx)
+#if defined(STM32H747xx)
 #define RCC_SR_SFTRSTF  RCC_RSR_SFT2RSTF
-#elif defined(STM32H7A3xx) || defined(STM32H7A3xxQ) || defined(STM32H7B3xx) || defined(STM32H7B3xxQ)
+#else
 #define RCC_SR_SFTRSTF  RCC_RSR_SFTRSTF
 #endif
 #define RCC_SR_RMVF     RCC_RSR_RMVF
@@ -48,6 +46,8 @@
     defined(STM32H7B3xx) || defined(STM32H7B3xxQ)
 // TODO
 #define POWERCTRL_GET_VOLTAGE_SCALING() PWR_REGULATOR_VOLTAGE_SCALE0
+#elif defined(STM32H723xx)
+#define POWERCTRL_GET_VOLTAGE_SCALING() LL_PWR_GetRegulVoltageScaling()
 #else
 #define POWERCTRL_GET_VOLTAGE_SCALING()     \
     (((PWR->CSR1 & PWR_CSR1_ACTVOS) && (SYSCFG->PWRCR & SYSCFG_PWRCR_ODEN)) ? \
@@ -382,7 +382,7 @@ STATIC uint32_t calc_apb2_div(uint32_t wanted_div) {
 #if defined(STM32F4) || defined(STM32F7) || defined(STM32G0) || defined(STM32G4) || defined(STM32H7)
 
 int powerctrl_set_sysclk(uint32_t sysclk, uint32_t ahb, uint32_t apb1, uint32_t apb2) {
-    // Return straightaway if the clocks are already at the desired frequency
+    // Return straight away if the clocks are already at the desired frequency
     if (sysclk == HAL_RCC_GetSysClockFreq()
         && ahb == HAL_RCC_GetHCLKFreq()
         && apb1 == HAL_RCC_GetPCLK1Freq()
@@ -659,7 +659,7 @@ int powerctrl_set_sysclk(uint32_t sysclk, uint32_t ahb, uint32_t apb1, uint32_t 
         powerctrl_config_systick();
     }
 
-    // Return straightaway if the clocks are already at the desired frequency.
+    // Return straight away if the clocks are already at the desired frequency.
     if (ahb == HAL_RCC_GetHCLKFreq()
         && apb1 == HAL_RCC_GetPCLK1Freq()
         && apb2 == HAL_RCC_GetPCLK2Freq()) {

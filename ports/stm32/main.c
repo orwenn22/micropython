@@ -379,7 +379,9 @@ void stm32_main(uint32_t reset_mode) {
     // Enable D2 SRAM1/2/3 clocks.
     __HAL_RCC_D2SRAM1_CLK_ENABLE();
     __HAL_RCC_D2SRAM2_CLK_ENABLE();
+    #if defined(__HAL_RCC_D2SRAM3_CLK_ENABLE)
     __HAL_RCC_D2SRAM3_CLK_ENABLE();
+    #endif
     #endif
 
     MICROPY_BOARD_EARLY_INIT();
@@ -557,7 +559,7 @@ soft_reset:
 
     // Run optional frozen boot code.
     #ifdef MICROPY_BOARD_FROZEN_BOOT_FILE
-    pyexec_frozen_module(MICROPY_BOARD_FROZEN_BOOT_FILE);
+    pyexec_frozen_module(MICROPY_BOARD_FROZEN_BOOT_FILE, false);
     #endif
 
     // Run boot.py (or whatever else a board configures at this stage).

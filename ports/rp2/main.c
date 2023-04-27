@@ -76,6 +76,10 @@ int main(int argc, char **argv) {
     bi_decl(bi_program_feature("UART REPL"))
     setup_default_uart();
     mp_uart_init();
+    #else
+    #ifndef NDEBUG
+    stdio_init_all();
+    #endif
     #endif
 
     #if MICROPY_HW_ENABLE_USBDEV
@@ -88,10 +92,6 @@ int main(int argc, char **argv) {
     #if MICROPY_PY_THREAD
     bi_decl(bi_program_feature("thread support"))
     mp_thread_init();
-    #endif
-
-    #ifndef NDEBUG
-    stdio_init_all();
     #endif
 
     // Start and initialise the RTC
@@ -168,9 +168,9 @@ int main(int argc, char **argv) {
 
         // Execute _boot.py to set up the filesystem.
         #if MICROPY_VFS_FAT && MICROPY_HW_USB_MSC
-        pyexec_frozen_module("_boot_fat.py");
+        pyexec_frozen_module("_boot_fat.py", false);
         #else
-        pyexec_frozen_module("_boot.py");
+        pyexec_frozen_module("_boot.py", false);
         #endif
 
         // Execute user scripts.
