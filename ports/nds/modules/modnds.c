@@ -5,11 +5,9 @@
 
 #include <string.h>
 
-#include <filesystem.h>
-#include <dirent.h>
+#include <fatfs.h>
 #include <stdio.h>
 #include <unistd.h>
-
 
 #include "../nitrofile.h"
 

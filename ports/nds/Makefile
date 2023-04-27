@@ -13,8 +13,8 @@ include $(TOP)/py/py.mk
 include $(TOP)/extmod/extmod.mk
 
 
-CROSS_COMPILE ?= /opt/devkitpro/devkitARM/bin/arm-none-eabi-
-
+#CROSS_COMPILE ?= /opt/devkitpro/devkitARM/bin/arm-none-eabi-
+CROSS_COMPILE ?= /opt/wonderful/toolchain/gcc-arm-none-eabi/bin/arm-none-eabi-
 
 DFU = $(TOP)/tools/dfu.py
 PYDFU = $(TOP)/tools/pydfu.py
@@ -22,9 +22,10 @@ PYDFU = $(TOP)/tools/pydfu.py
 INC += -I.
 INC += -I$(TOP)
 INC += -I$(BUILD)
-INC += -I/opt/devkitpro/libnds/include
-INC += -I/opt/devkitpro/portlibs/nds/include
-INC += -I/opt/devkitpro/portlibs/armv5te/include
+#INC += -I/opt/devkitpro/libnds/include
+#INC += -I/opt/devkitpro/portlibs/nds/include
+#INC += -I/opt/devkitpro/portlibs/armv5te/include
+INC += -I/opt/blocksds/core/libs/libnds/include
 
 CFLAGS_DSCPU = -marm -mthumb-interwork -march=armv5te -mtune=arm946e-s
 CFLAGS += $(INC) -Wall -Werror -std=gnu99 $(CFLAGS_DSCPU) -DARM9 -fno-exceptions
@@ -46,8 +47,9 @@ endif
 CXXFLAGS += $(filter-out -std=gnu99,$(CFLAGS))
 
 LD = $(CC)
-LDFLAGS = -specs=ds_arm9.specs -g -marm -mthumb-interwork -march=armv5te -mtune=arm946e-s -Wl,-Map,build/firmware.map
-LIBS = -L/opt/devkitpro/libnds/lib -L/opt/devkitpro/portlibs/nds/lib -L/opt/devkitpro/portlibs/armv5te/lib -lfilesystem -lfat -lnds9 -lm -lmm9
+LDFLAGS = /opt/blocksds/core/sys/crts/ds_arm9_crt0.o -nostdlib -T/opt/blocksds/core/sys/crts/ds_arm9.mem -T/opt/blocksds/core/sys/crts/ds_arm9.ld -g -marm -mthumb-interwork -march=armv5te -mtune=arm946e-s -Wl,-Map,build/firmware.map
+#LIBS = -L/opt/devkitpro/libnds/lib -L/opt/devkitpro/portlibs/nds/lib -L/opt/devkitpro/portlibs/armv5te/lib -lfilesystem -lfat -lnds9 -lm -lmm9
+LIBS = -L/opt/blocksds/core/libs/libnds/lib -Wl,--start-group -lnds9 -lc -lgcc -Wl,--end-group
 
 SRC_C = \
 	main.c \
@@ -57,9 +59,9 @@ SRC_C = \
 	shared/runtime/pyexec.c \
 	shared/runtime/stdout_helpers.c \
 	shared/timeutils/timeutils.c \
-	lib/oofatfs/ff.c \
 	$(BUILD)/_frozen_mpy.c \
 
+# lib/oofatfs/ff.c
 
 SRC_C += shared/libc/string0.c
 SRC_C += modules/modnds.c modules/modos.c nitrofile.c
@@ -77,7 +79,8 @@ all: $(BUILD)/firmware.nds
 
 
 $(BUILD)/firmware.nds: $(BUILD)/firmware.elf
-	ndstool -9 ./build/firmware.elf -c ./build/firmware.nds -d ./nitrofs
+	/opt/blocksds/core/tools/mkfatimg/mkfatimg -t nitrofs build/nitrofs.bin 0
+	/opt/blocksds/core/tools/ndstool/ndstool -7 /opt/blocksds/core/sys/default_arm7/arm7.elf -9 ./build/firmware.elf -c ./build/firmware.nds -F build/nitrofs.bin
 
 $(BUILD)/_frozen_mpy.c: $(TOP)/tests/frozen/frozentest.mpy $(BUILD)/genhdr/qstrdefs.generated.h
 	$(ECHO) "MISC freezing bytecode"

@@ -1,3 +1,5 @@
+#include <dirent.h>
+
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -11,9 +13,8 @@
 #include "py/gc.h"
 #include "shared/runtime/pyexec.h"
 
-#include <dirent.h>
+#include <fatfs.h>
 #include <nds.h>
-#include <filesystem.h>
 #include <unistd.h>
 #include <sys/stat.h>
 
