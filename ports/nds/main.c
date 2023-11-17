@@ -111,11 +111,11 @@ void gc_collect(void) {
 
 //Ouvrir le fichier filename et en faire un lexer pour l'exécuter.
 //Notamment utiliser par import.
-mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
+mp_lexer_t *mp_lexer_new_from_file(qstr filename) {
     //mp_raise_OSError(MP_ENOENT);
 
     //Supposer que le fichier existe
-    FILE* f = fopen(filename, "r");
+    FILE* f = fopen(qstr_str(filename), "r");
 
     fseek(f, 0, SEEK_END);
     size_t lenght = ftell(f);
@@ -127,7 +127,7 @@ mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
     }
     fclose(f);
 
-    return mp_lexer_new_from_str_len(qstr_from_str(filename), (const char *)data, (mp_uint_t)lenght, 0);
+    return mp_lexer_new_from_str_len(filename, (const char *)data, (mp_uint_t)lenght, 0);
 }
 
 // Vérifier si le fichier d'importation existe ? Et savoir si c'est un dossier ou un fichier.
