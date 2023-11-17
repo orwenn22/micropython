@@ -28,7 +28,7 @@
 
 #define MICROPY_PY_SYS_STDFILES     (0)
 
-#define MICROPY_PY_UOS (0)
+#define MICROPY_PY_OS (0)
 
 //possiblement pas nécessaire
 //#ifndef MICROPY_STACKLESS
