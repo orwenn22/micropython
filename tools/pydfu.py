@@ -8,7 +8,7 @@
 DFU, without requiring dfu-util.
 
 See app note AN3156 for a description of the DFU protocol.
-See document UM0391 for a dscription of the DFuse file.
+See document UM0391 for a description of the DFuse file.
 """
 
 from __future__ import print_function
@@ -77,7 +77,7 @@ __DFU_INTERFACE = 0
 
 # Python 3 deprecated getargspec in favour of getfullargspec, but
 # Python 2 doesn't have the latter, so detect which one to use
-getargspec = getattr(inspect, "getfullargspec", inspect.getargspec)
+getargspec = getattr(inspect, "getfullargspec", getattr(inspect, "getargspec", None))
 
 if "length" in getargspec(usb.util.get_string).args:
     # PyUSB 1.0.0.b1 has the length argument
