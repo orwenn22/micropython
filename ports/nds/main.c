@@ -16,6 +16,7 @@
 #include <filesystem.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <nds/arm9/dldi.h>
 
 
 #if MICROPY_ENABLE_COMPILER
@@ -44,12 +45,14 @@ static char heap[MICROPY_HEAP_SIZE];
 bool g_nitroenabled;
 
 int main(int argc, char **argv) {
+    lcdMainOnBottom();      //mettre main en bas et sub en haut
+    consoleDemoInit();      //la console est initialisé sur le sub (en haut)
+    printf("DLDI : %s\n", io_dldi_data->friendlyName);
+
     g_nitroenabled = nitroFSInit(NULL);
     if(g_nitroenabled) { chdir("nitro:/"); }
 
-    lcdMainOnBottom();      //mettre main en bas et sub en haut
 
-    consoleDemoInit();      //la console est initialisé sur le sub (en haut)
 
     videoSetMode(MODE_0_2D);
     keyboardInit(NULL, 3, BgType_Text4bpp, BgSize_T_256x512, 20, 0, true, true);    //initialiser le clavier en bas
