@@ -27,14 +27,22 @@ MP_DEFINE_CONST_FUN_OBJ_0(os_getcwd_obj, py_os_getcwd);
 
 //////////////////////////
 // listdir() -> List[str]
-STATIC mp_obj_t py_os_listdir(void) {
+STATIC mp_obj_t py_os_listdir(size_t n_args, const mp_obj_t *args) {
     mp_obj_t l = mp_obj_new_list(0, NULL);  //initialise empty list.
 
-    char cwd[256];
-    getcwd(cwd, (size_t)256);
+    char need_dealloc = 0;
+    char *directory;
+    if(n_args == 1) {
+        directory = (char *)mp_obj_str_get_str(args[0]);
+    }
+    else {
+        need_dealloc = 1;
+        directory = m_malloc((size_t)256);
+        getcwd(directory, (size_t)256);
+    }
 
     //DIR* targetdir = opendir(g_currentworkingdir);
-    DIR* targetdir = opendir(cwd);
+    DIR* targetdir = opendir(directory);
     if(targetdir != NULL) {
         while(true) {
             struct dirent* pent = readdir(targetdir);
@@ -48,11 +56,13 @@ STATIC mp_obj_t py_os_listdir(void) {
         printf("Directory doesn't exist\n");
     }
     closedir(targetdir);
+    if(need_dealloc) {
+        m_free(directory);
+    }
 
-    //mp_obj_list_append(l, mp_obj_new_int(42));
     return l;
 }
-MP_DEFINE_CONST_FUN_OBJ_0(os_listdir_obj, py_os_listdir);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(os_listdir_obj, 0, 1, py_os_listdir);
 
 //////////////////////////////////////////////////////////////
 //// Define the module itself
