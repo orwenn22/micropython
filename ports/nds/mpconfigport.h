@@ -87,8 +87,8 @@ typedef long mp_off_t;
     do { \
         extern void mp_handle_pending(bool); \
         mp_handle_pending(true); \
-        usleep(500); /* equivalent to mp_hal_delay_us(500) */ \
     } while (0);
 #endif
+//usleep(500); /* equivalent to mp_hal_delay_us(500) */
 
 #define MP_STATE_PORT MP_STATE_VM

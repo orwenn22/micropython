@@ -70,13 +70,14 @@ STATIC mp_obj_t py_nds_nitrofile_read(mp_obj_t self_in) {
 
     char* c_rstr = m_malloc(finallenght);
 
-    short c = getc(self->fileptr);
+    /*short c = getc(self->fileptr);
     size_t i = 0;
     while(c != EOF) {
         c_rstr[i] = (char)c;
         c = getc(self->fileptr);
         i++;
-    }
+    }*/
+    fread(c_rstr, 1, finallenght, self->fileptr);
 
     mp_obj_t py_obj;
     if(self->binary) {

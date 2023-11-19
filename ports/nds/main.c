@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
     printf("DLDI : %s\n", io_dldi_data->friendlyName);
 
     g_nitroenabled = nitroFSInit(NULL);
-    if(g_nitroenabled) { chdir("nitro:/"); }
+    if(g_nitroenabled) { chdir("nitro:/root"); }
 
 
 
