@@ -4,6 +4,8 @@
 #include <dirent.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 
 //////////////////////////
@@ -64,6 +66,20 @@ STATIC mp_obj_t py_os_listdir(size_t n_args, const mp_obj_t *args) {
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(os_listdir_obj, 0, 1, py_os_listdir);
 
+
+//////////////////////////
+// mkdir(foldername) -> None
+STATIC mp_obj_t py_os_mkdir(const mp_obj_t foldername) {
+    const char *c_foldername = mp_obj_str_get_str(foldername);
+    struct stat st = {0};
+    if(stat(c_foldername, &st) == -1) {
+        mkdir(c_foldername, 0700);
+    }
+
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_1(os_mkdir_obj, py_os_mkdir);
+
 //////////////////////////////////////////////////////////////
 //// Define the module itself
 
@@ -74,6 +90,7 @@ STATIC const mp_rom_map_elem_t mp_module_os_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_chdir)            , MP_ROM_PTR(&os_chdir_obj)},
     { MP_ROM_QSTR(MP_QSTR_getcwd)           , MP_ROM_PTR(&os_getcwd_obj)},
     { MP_ROM_QSTR(MP_QSTR_listdir)          , MP_ROM_PTR(&os_listdir_obj)},
+    { MP_ROM_QSTR(MP_QSTR_mkdir)            , MP_ROM_PTR(&os_mkdir_obj)},
 
 };
 STATIC MP_DEFINE_CONST_DICT(mp_module_os_globals, mp_module_os_globals_table);

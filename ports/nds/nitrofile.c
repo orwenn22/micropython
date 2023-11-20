@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
+
 ///////////////////////////
 // NitroFile.close()
 STATIC mp_obj_t py_nds_nitrofile_close(mp_obj_t self_in) {
@@ -48,7 +49,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(nds_nitrofile_readable_obj, py_nds_nitrofile_readable)
 // NitroFile.write(data : str)
 STATIC mp_obj_t py_nds_nitrofile_write(mp_obj_t self_in, mp_obj_t str_data) {
     nds_obj_nitro_file* self = MP_OBJ_TO_PTR(self_in);
-    
+
     if(self->write == false) {
         mp_raise_OSError(EIO);  //idk if it's an IO error in that case
     }
@@ -63,33 +64,66 @@ MP_DEFINE_CONST_FUN_OBJ_2(nds_nitrofile_write_obj, py_nds_nitrofile_write);
 
 ///////////////////////////
 // NitroFile.read() -> str
-STATIC mp_obj_t py_nds_nitrofile_read(mp_obj_t self_in) {
-    nds_obj_nitro_file* self = MP_OBJ_TO_PTR(self_in);
-    
-    size_t finallenght = self->charcount - ftell(self->fileptr);
+STATIC mp_obj_t py_nds_nitrofile_read(size_t n_args, const mp_obj_t *args) {
+    nds_obj_nitro_file* self = MP_OBJ_TO_PTR(args[0]);
 
-    char* c_rstr = m_malloc(finallenght);   //NOTE: this is not terminated by a null character.
+    size_t finallength = self->charcount - ftell(self->fileptr);
+    size_t alloc_size = 0;
 
-    /*short c = getc(self->fileptr);
-    size_t i = 0;
-    while(c != EOF) {
-        c_rstr[i] = (char)c;
-        c = getc(self->fileptr);
-        i++;
-    }*/
-    fread(c_rstr, 1, finallenght, self->fileptr);
+    if(n_args == 2) {
+        int char_count = mp_obj_get_int(args[1]);
+        if(finallength > char_count) {
+            finallength = char_count;
+        }
+    }
+    if(finallength == 0) {
+        return mp_obj_new_str("", 0);
+    }
+
+
+    if(self->binary) {
+        alloc_size = finallength;
+    }
+    else {
+        /*short c = getc(self->fileptr);
+        size_t i = 0;
+        while(c != EOF) {
+            if(i >= finallength) break;
+            i++;
+            alloc_size++;
+            c = getc(self->fileptr);
+            if((c&80) != 0) {     //utf8
+                c = getc(self->fileptr);
+                alloc_size++;
+            }
+        }
+        fseek(self->fileptr, pos_in_file, SEEK_SET);*/
+        size_t pos_in_file = ftell(self->fileptr);
+        for(size_t i = 0; i < finallength; i++) {
+            unsigned char c = getc(self->fileptr);
+            alloc_size++;
+            if((c&0x80) != 0) {
+                c = getc(self->fileptr);
+                alloc_size++;
+            }
+        }
+        fseek(self->fileptr, pos_in_file, SEEK_SET);
+    }
+
+    char* c_rstr = m_malloc(alloc_size);   //NOTE: this is not terminated by a null character.
+    fread(c_rstr, 1, alloc_size, self->fileptr);
 
     mp_obj_t py_obj;
     if(self->binary) {
-        py_obj = mp_obj_new_bytearray(finallenght, c_rstr);
+        py_obj = mp_obj_new_bytearray(finallength, c_rstr);
     }
     else {
-        py_obj = mp_obj_new_str(c_rstr, finallenght);
+        py_obj = mp_obj_new_str(c_rstr, alloc_size);
     }
     m_free(c_rstr);
     return py_obj;
 }
-MP_DEFINE_CONST_FUN_OBJ_1(nds_nitrofile_read_obj, py_nds_nitrofile_read);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(nds_nitrofile_read_obj, 1, 2, py_nds_nitrofile_read);
 
 
 ///////////////////////////
@@ -158,11 +192,11 @@ STATIC mp_obj_t py_nds_nitrofile_seek(size_t n_args, const mp_obj_t *args) {
     nds_obj_nitro_file* self = MP_OBJ_TO_PTR(args[0]);
     int offset = mp_obj_get_int(args[1]);
     int whence = 0;
-    
+
     if(n_args == 3) {
         whence = mp_obj_get_int(args[2]);
     }
-    
+
     //TODO : this is not how this is handled in CPython.
     return mp_obj_new_int(fseek(self->fileptr, offset, whence));
 }
@@ -176,6 +210,23 @@ STATIC mp_obj_t py_nds_nitrofile_tell(mp_obj_t self_in) {
     return mp_obj_new_int(ftell(self->fileptr));
 }
 MP_DEFINE_CONST_FUN_OBJ_1(nds_nitrofile_tell_obj, py_nds_nitrofile_tell);
+
+
+///////////////////////////
+// NitroFile.__enter__([...]) //TODO : not functional
+STATIC mp_obj_t py_nds_nitrofile___enter__(mp_obj_t self_in) {
+    return self_in;
+}
+MP_DEFINE_CONST_FUN_OBJ_1(nds_nitrofile___enter___obj, py_nds_nitrofile___enter__);
+
+
+///////////////////////////
+// NitroFile.__exit__([...])
+STATIC mp_obj_t py_nds_nitrofile___exit__(size_t n_args, const mp_obj_t *args) {
+    (void)n_args;
+    return py_nds_nitrofile_close(args[0]);
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(py_nds_nitrofile___exit___obj, 4, 4, py_nds_nitrofile___exit__);
 
 
 /////////////////////////////////////////////////
@@ -192,6 +243,8 @@ STATIC const mp_rom_map_elem_t nds_nitrofile_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_readlines) , MP_ROM_PTR(&nds_nitrofile_readlines_obj) },
     { MP_ROM_QSTR(MP_QSTR_seek)      , MP_ROM_PTR(&nds_nitrofile_seek_obj) },
     { MP_ROM_QSTR(MP_QSTR_tell)      , MP_ROM_PTR(&nds_nitrofile_tell_obj) },
+    { MP_ROM_QSTR(MP_QSTR___enter__) , MP_ROM_PTR(&nds_nitrofile___enter___obj) },
+    { MP_ROM_QSTR(MP_QSTR___exit__)  , MP_ROM_PTR(&py_nds_nitrofile___exit___obj) },
 };
 STATIC MP_DEFINE_CONST_DICT(nds_nitrofile_dict, nds_nitrofile_dict_table);  //Convert it to micropython object (dict)
 

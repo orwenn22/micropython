@@ -37,7 +37,7 @@ void do_str(const char *src, mp_parse_input_kind_t input_kind) {
 #endif
 
 
-static char *stack_top;
+//char *stack_top;
 #if MICROPY_ENABLE_GC
 static char heap[MICROPY_HEAP_SIZE];
 #endif
@@ -53,7 +53,6 @@ int main(int argc, char **argv) {
     if(g_nitroenabled) { chdir("nitro:/root"); }
 
 
-
     videoSetMode(MODE_0_2D);
     keyboardInit(NULL, 3, BgType_Text4bpp, BgSize_T_256x512, 20, 0, true, true);    //initialiser le clavier en bas
     keyboardShow();
@@ -65,6 +64,7 @@ int main(int argc, char **argv) {
     printf("Stack size   : %u\n", 48 * 1024);
     printf("Heap size    : %u\n", MICROPY_HEAP_SIZE);
     printf("Heap address : %p\n", heap);
+    printf("Stack        : %p\n", MP_STATE_THREAD(stack_top));
 
 
     #if MICROPY_ENABLE_GC
@@ -105,8 +105,11 @@ void gc_collect(void) {
     // WARNING: This gc_collect implementation doesn't try to get root
     // pointers from CPU registers, and thus may function incorrectly.
     void *dummy;
+    printf("COLLECT\n");
+    printf("0x%p\n", MP_STATE_THREAD(stack_top));
+    printf("0x%p\n", &dummy);
     gc_collect_start();
-    gc_collect_root(&dummy, ((mp_uint_t)stack_top - (mp_uint_t)&dummy) / sizeof(mp_uint_t));
+    gc_collect_root(&dummy, ((mp_uint_t)MP_STATE_THREAD(stack_top) - (mp_uint_t)&dummy) / sizeof(mp_uint_t));
     gc_collect_end();
     gc_dump_info(&mp_plat_print);
 }

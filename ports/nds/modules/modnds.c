@@ -80,6 +80,7 @@ mp_obj_t py_nds_open(mp_obj_t path, mp_obj_t mode) {
 
     nds_obj_nitro_file* fileobj = m_new_obj(nds_obj_nitro_file);
     fileobj->base.type = &nds_type_nitrofile;
+    //printf("0x%p\n", fileobj);
 
     fileobj->fileptr = f;
     fileobj->read = read;
