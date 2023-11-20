@@ -68,7 +68,7 @@ STATIC mp_obj_t py_nds_nitrofile_read(mp_obj_t self_in) {
     
     size_t finallenght = self->charcount - ftell(self->fileptr);
 
-    char* c_rstr = m_malloc(finallenght);
+    char* c_rstr = m_malloc(finallenght);   //NOTE: this is not terminated by a null character.
 
     /*short c = getc(self->fileptr);
     size_t i = 0;

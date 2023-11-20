@@ -5,7 +5,7 @@
 
 #include <string.h>
 
-#include <filesystem.h>
+#include <fatfs.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -30,7 +30,7 @@ MP_DEFINE_CONST_FUN_OBJ_0(nds_printstackusage_obj, py_nds_printstackusage);
 STATIC mp_obj_t py_nds_nitrofsinit(void) {
     bool r = nitroFSInit(NULL);
     if(r) {
-        chdir("nitro:/");
+        chdir("nitro:/root");
     }
     return mp_obj_new_bool(r);
 }

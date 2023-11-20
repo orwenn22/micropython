@@ -77,7 +77,7 @@ all: $(BUILD)/firmware.nds
 
 
 $(BUILD)/firmware.nds: $(BUILD)/firmware.elf
-	/opt/wonderful/thirdparty/blocksds/core/tools/ndstool/ndstool -9 ./build/firmware.elf -7 /opt/wonderful/thirdparty/blocksds/core/sys/default_arm7/arm7.elf -c ./build/firmware.nds -d ./nitrofs
+	/opt/wonderful/thirdparty/blocksds/core/tools/ndstool/ndstool -c ./build/firmware.nds -7 /opt/wonderful/thirdparty/blocksds/core/sys/default_arm7/arm7.elf -9 ./build/firmware.elf -b /opt/wonderful/thirdparty/blocksds/core/sys/icon.bmp "Micropython" -d nitrofs
 
 $(BUILD)/_frozen_mpy.c: $(TOP)/tests/frozen/frozentest.mpy $(BUILD)/genhdr/qstrdefs.generated.h
 	$(ECHO) "MISC freezing bytecode"

@@ -13,7 +13,7 @@
 
 #include <dirent.h>
 #include <nds.h>
-#include <filesystem.h>
+#include <fatfs.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <nds/arm9/dldi.h>
