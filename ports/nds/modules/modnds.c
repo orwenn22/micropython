@@ -99,8 +99,11 @@ mp_obj_t py_nds_open(mp_obj_t path, mp_obj_t mode) {
 MP_DEFINE_CONST_FUN_OBJ_2(nds_open_obj, py_nds_open);
 
 
-
-
+//This will just call the tunction with 2 params
+mp_obj_t py_nds_open_ex(size_t n_args, const mp_obj_t *args) {
+    return py_nds_open(args[0], args[1]);
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(nds_open_ex_obj, 2, 4, py_nds_open_ex);
 
 
 
@@ -114,7 +117,7 @@ STATIC const mp_rom_map_elem_t mp_module_nds_globals_table[] = {
 
     { MP_ROM_QSTR(MP_QSTR_printstackusage)  , MP_ROM_PTR(&nds_printstackusage_obj) },   //function "printstackusage()"
     { MP_ROM_QSTR(MP_QSTR_nitrofsinit)      , MP_ROM_PTR(&nds_nitrofsinit_obj) },
-    { MP_ROM_QSTR(MP_QSTR_open)             , MP_ROM_PTR(&nds_open_obj) },
+    { MP_ROM_QSTR(MP_QSTR_open)             , MP_ROM_PTR(&nds_open_ex_obj) },       //nds.open()
 
     { MP_ROM_QSTR(MP_QSTR_myconst)          , myconst },
 
