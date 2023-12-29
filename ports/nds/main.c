@@ -167,28 +167,21 @@ mp_import_stat_t mp_import_stat(const char *path) {
 mp_obj_t py_nds_open(mp_obj_t path, mp_obj_t mode);     //forward declaration (TODO : move to header ?)
 mp_obj_t mp_builtin_open(size_t n_args, const mp_obj_t *args, mp_map_t *kwargs) {
     //printf("Open called with %u arguments\n", n_args);
+    //bool ismodedefined = false;
     mp_obj_t mode;
-    bool ismodedefined = false;
-    if(n_args == 2) {
+    if(n_args >= 2) {
         mode = args[1];
-        ismodedefined = true;
+        return py_nds_open(args[0], mode);
     } 
     else {
-        mp_map_elem_t* modeelem = mp_map_lookup(kwargs, mp_obj_new_str("mode", 4), MP_MAP_LOOKUP_ADD_IF_NOT_FOUND);
-        //printf("mode : %s\n", mp_obj_str_get_str(modeelem->value));
-        if(mp_obj_is_str(modeelem->value)) {
-            mode = modeelem->value;
-            ismodedefined = true;
-        }
-        else {
-            mode = mp_obj_new_str("r", 1);
-            ismodedefined = true;
-        }
+        mode = mp_obj_new_str("r", 1);
     }
-
+    return py_nds_open(args[0], mode);
+    /*
     if(ismodedefined == true)
     return py_nds_open(args[0], mode);
     else return mp_obj_new_int(-1);
+     */
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(mp_builtin_open_obj, 1, mp_builtin_open);
 
