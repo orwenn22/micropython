@@ -177,7 +177,7 @@ internal_bench/bytebuf:
 
 ## Test key/certificates
 
-SSL/TLS tests in `multi_net` and `net_inet` use a 
+SSL/TLS tests in `multi_net` and `net_inet` use a
 self-signed key/cert pair that is randomly generated and to be used for
 testing/demonstration only. You should always generate your own key/cert.
 
@@ -189,7 +189,7 @@ In this case CN is: micropython.local
 
 Convert them to DER format:
 ```
-$ openssl rsa -in rsa_key.pem -out rsa_key.der -outform DER
+$ openssl pkey -in rsa_key.pem -out rsa_key.der -outform DER
 $ openssl x509 -in rsa_cert.pem -out rsa_cert.der -outform DER
 ```
 
