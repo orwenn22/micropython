@@ -44,19 +44,25 @@ static char heap[MICROPY_HEAP_SIZE];
 #endif
 
 bool g_nitroenabled;
+PrintConsole topConsole;
 
 int main(int argc, char **argv) {
-    lcdMainOnBottom();      //mettre main en bas et sub en haut
-    consoleDemoInit();      //la console est initialisé sur le sub (en haut)
+    videoSetMode(MODE_0_2D);
+    videoSetModeSub(MODE_0_2D);
+
+    vramSetBankA(VRAM_A_MAIN_BG);
+    vramSetBankC(VRAM_C_SUB_BG);
+
+    consoleInit(&topConsole, 3, BgType_Text4bpp, BgSize_T_256x256, 31, 0, true, true);
+    consoleSelect(&topConsole);
+    keyboardInit(NULL, 3, BgType_Text4bpp, BgSize_T_256x512, 20, 0, false, true);    //initialiser le clavier en bas
+    keyboardShow();
+
     printf("DLDI : %s\n", io_dldi_data->friendlyName);
 
     g_nitroenabled = nitroFSInit(NULL);
     if(g_nitroenabled) { chdir("nitro:/root"); }
 
-
-    videoSetMode(MODE_0_2D);
-    keyboardInit(NULL, 3, BgType_Text4bpp, BgSize_T_256x512, 20, 0, true, true);    //initialiser le clavier en bas
-    keyboardShow();
 
     mp_stack_ctrl_init();
     mp_stack_set_limit(48 * 1024);  //48 ko
