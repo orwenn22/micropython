@@ -14,7 +14,7 @@
 
 ///////////////////////////
 // NitroFile.close()
-STATIC mp_obj_t py_nds_nitrofile_close(mp_obj_t self_in) {
+static mp_obj_t py_nds_nitrofile_close(mp_obj_t self_in) {
     nds_obj_nitro_file* self = MP_OBJ_TO_PTR(self_in);
     if(self->fileptr != NULL) {
         fclose(self->fileptr);
@@ -29,7 +29,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(nds_nitrofile_close_obj, py_nds_nitrofile_close);
 
 ///////////////////////////
 // NitroFile.ptr() -> Int
-STATIC mp_obj_t py_nds_nitrofile_ptr(mp_obj_t self_in) {
+static mp_obj_t py_nds_nitrofile_ptr(mp_obj_t self_in) {
     nds_obj_nitro_file* self = MP_OBJ_TO_PTR(self_in);
     return mp_obj_new_int((unsigned long)self->fileptr);
 }
@@ -38,7 +38,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(nds_nitrofile_ptr_obj, py_nds_nitrofile_ptr);
 
 ///////////////////////////
 // NitroFile.readable() -> Bool
-STATIC mp_obj_t py_nds_nitrofile_readable(mp_obj_t self_in) {
+static mp_obj_t py_nds_nitrofile_readable(mp_obj_t self_in) {
     nds_obj_nitro_file* self = MP_OBJ_TO_PTR(self_in);
     return mp_obj_new_bool(self->read);
 }
@@ -47,7 +47,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(nds_nitrofile_readable_obj, py_nds_nitrofile_readable)
 
 ///////////////////////////
 // NitroFile.write(data : str)
-STATIC mp_obj_t py_nds_nitrofile_write(mp_obj_t self_in, mp_obj_t str_data) {
+static mp_obj_t py_nds_nitrofile_write(mp_obj_t self_in, mp_obj_t str_data) {
     nds_obj_nitro_file* self = MP_OBJ_TO_PTR(self_in);
 
     if(self->write == false) {
@@ -64,7 +64,7 @@ MP_DEFINE_CONST_FUN_OBJ_2(nds_nitrofile_write_obj, py_nds_nitrofile_write);
 
 ///////////////////////////
 // NitroFile.read() -> str
-STATIC mp_obj_t py_nds_nitrofile_read(size_t n_args, const mp_obj_t *args) {
+static mp_obj_t py_nds_nitrofile_read(size_t n_args, const mp_obj_t *args) {
     nds_obj_nitro_file* self = MP_OBJ_TO_PTR(args[0]);
 
     size_t finallength = self->charcount - ftell(self->fileptr);
@@ -128,7 +128,7 @@ MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(nds_nitrofile_read_obj, 1, 2, py_nds_nitrofi
 
 ///////////////////////////
 // NitroFile.readline() -> str
-STATIC mp_obj_t py_nds_nitrofile_readline(mp_obj_t self_in) {
+static mp_obj_t py_nds_nitrofile_readline(mp_obj_t self_in) {
     nds_obj_nitro_file* self = MP_OBJ_TO_PTR(self_in);
 
     //Find the next end of line or end of file
@@ -169,7 +169,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(nds_nitrofile_readline_obj, py_nds_nitrofile_readline)
 
 ///////////////////////////
 // NitroFile.readlines() -> List[str]
-STATIC mp_obj_t py_nds_nitrofile_readlines(mp_obj_t self_in) {
+static mp_obj_t py_nds_nitrofile_readlines(mp_obj_t self_in) {
     //nds_obj_nitro_file* self = MP_OBJ_TO_PTR(self_in);
 
     mp_obj_t py_list = mp_obj_new_list(0, NULL);
@@ -188,7 +188,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(nds_nitrofile_readlines_obj, py_nds_nitrofile_readline
 
 ///////////////////////////
 // NitroFile.seek(offset [, whence])
-STATIC mp_obj_t py_nds_nitrofile_seek(size_t n_args, const mp_obj_t *args) {
+static mp_obj_t py_nds_nitrofile_seek(size_t n_args, const mp_obj_t *args) {
     nds_obj_nitro_file* self = MP_OBJ_TO_PTR(args[0]);
     int offset = mp_obj_get_int(args[1]);
     int whence = 0;
@@ -205,7 +205,7 @@ MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(nds_nitrofile_seek_obj, 2, 3, py_nds_nitrofi
 
 ///////////////////////////
 // NitroFile.tell() -> str
-STATIC mp_obj_t py_nds_nitrofile_tell(mp_obj_t self_in) {
+static mp_obj_t py_nds_nitrofile_tell(mp_obj_t self_in) {
     nds_obj_nitro_file* self = MP_OBJ_TO_PTR(self_in);
     return mp_obj_new_int(ftell(self->fileptr));
 }
@@ -214,7 +214,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(nds_nitrofile_tell_obj, py_nds_nitrofile_tell);
 
 ///////////////////////////
 // NitroFile.__enter__([...]) //TODO : not functional
-STATIC mp_obj_t py_nds_nitrofile___enter__(mp_obj_t self_in) {
+static mp_obj_t py_nds_nitrofile___enter__(mp_obj_t self_in) {
     return self_in;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(nds_nitrofile___enter___obj, py_nds_nitrofile___enter__);
@@ -222,18 +222,18 @@ MP_DEFINE_CONST_FUN_OBJ_1(nds_nitrofile___enter___obj, py_nds_nitrofile___enter_
 
 ///////////////////////////
 // NitroFile.__exit__([...])
-STATIC mp_obj_t py_nds_nitrofile___exit__(size_t n_args, const mp_obj_t *args) {
+static mp_obj_t py_nds_nitrofile___exit__(size_t n_args, const mp_obj_t *args) {
     (void)n_args;
     return py_nds_nitrofile_close(args[0]);
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(py_nds_nitrofile___exit___obj, 4, 4, py_nds_nitrofile___exit__);
+static MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(py_nds_nitrofile___exit___obj, 4, 4, py_nds_nitrofile___exit__);
 
 
 /////////////////////////////////////////////////
 //// Define NitroFile type for micropython
 
 //Methods & stuff in NitroFile
-STATIC const mp_rom_map_elem_t nds_nitrofile_dict_table[] = {
+static const mp_rom_map_elem_t nds_nitrofile_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_close)     , MP_ROM_PTR(&nds_nitrofile_close_obj) },
     { MP_ROM_QSTR(MP_QSTR_ptr)       , MP_ROM_PTR(&nds_nitrofile_ptr_obj) },
     { MP_ROM_QSTR(MP_QSTR_readable)  , MP_ROM_PTR(&nds_nitrofile_readable_obj) },
@@ -246,7 +246,7 @@ STATIC const mp_rom_map_elem_t nds_nitrofile_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR___enter__) , MP_ROM_PTR(&nds_nitrofile___enter___obj) },
     { MP_ROM_QSTR(MP_QSTR___exit__)  , MP_ROM_PTR(&py_nds_nitrofile___exit___obj) },
 };
-STATIC MP_DEFINE_CONST_DICT(nds_nitrofile_dict, nds_nitrofile_dict_table);  //Convert it to micropython object (dict)
+static MP_DEFINE_CONST_DICT(nds_nitrofile_dict, nds_nitrofile_dict_table);  //Convert it to micropython object (dict)
 
 //Object "NitroFile" definition
 MP_DEFINE_CONST_OBJ_TYPE(

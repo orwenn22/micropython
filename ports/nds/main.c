@@ -13,7 +13,8 @@
 
 #include <dirent.h>
 #include <nds.h>
-#include <fatfs.h>
+#include <fat.h>
+#include <filesystem.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <nds/arm9/dldi.h>
@@ -74,7 +75,6 @@ int main(int argc, char **argv) {
     #if MICROPY_ENABLE_COMPILER
 
     //iprintf("Hello from C\n");
-    //do_str("print('hello DS')", MP_PARSE_SINGLE_INPUT);
     //iprintf("Hello from C\n");
     
     //do_str("print('hello world!', list(x+1 for x in range(10)), end='eol\\n')", MP_PARSE_SINGLE_INPUT);

@@ -5,7 +5,8 @@
 
 #include <string.h>
 
-#include <fatfs.h>
+#include <fat.h>
+#include <filesystem.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -18,7 +19,7 @@ const mp_obj_t myconst = MP_ROM_INT(42);
 
 //////////////////////////
 //printstackusage()
-STATIC mp_obj_t py_nds_printstackusage(void) {
+static mp_obj_t py_nds_printstackusage(void) {
     printf("Stack usage : %u\n", mp_stack_usage());
     return mp_const_none;
 }
@@ -27,7 +28,7 @@ MP_DEFINE_CONST_FUN_OBJ_0(nds_printstackusage_obj, py_nds_printstackusage);
 
 //////////////////////////
 // nitrofsinit() -> Bool
-STATIC mp_obj_t py_nds_nitrofsinit(void) {
+static mp_obj_t py_nds_nitrofsinit(void) {
     bool r = nitroFSInit(NULL);
     if(r) {
         chdir("nitro:/root");
@@ -112,7 +113,7 @@ MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(nds_open_ex_obj, 2, 4, py_nds_open_ex);
 
 
 //List all the things in the nds module
-STATIC const mp_rom_map_elem_t mp_module_nds_globals_table[] = {
+static const mp_rom_map_elem_t mp_module_nds_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__)         , MP_ROM_QSTR(MP_QSTR_nds) },               //module name "nds"
 
     { MP_ROM_QSTR(MP_QSTR_printstackusage)  , MP_ROM_PTR(&nds_printstackusage_obj) },   //function "printstackusage()"
@@ -123,7 +124,7 @@ STATIC const mp_rom_map_elem_t mp_module_nds_globals_table[] = {
 
     //{ MP_ROM_QSTR(MP_QSTR_NitroFile)        , MP_ROM_PTR(&nds_type_nitrofile) },        //class "NitroFile"
 };
-STATIC MP_DEFINE_CONST_DICT(mp_module_nds_globals, mp_module_nds_globals_table);
+static MP_DEFINE_CONST_DICT(mp_module_nds_globals, mp_module_nds_globals_table);
 
 
 //Module object

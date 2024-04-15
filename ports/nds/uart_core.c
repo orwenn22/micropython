@@ -11,6 +11,7 @@
 
 // Receive single character
 int mp_hal_stdin_rx_chr(void) {
+    scanKeys();     //We need to scanKey before getting the key from the keyboard
     int key = keyboardUpdate();
     if(key > 0) {
         if(key == '\n') {       //libnds' keyboard return '\n' when enter is pressed...
